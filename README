@@ -1,101 +1,15 @@
 This is a mirror of http://www.vim.org/scripts/script.php?script_id=5069
 
-
-https://github.com/pelodelfuego/vim-swoop
-
-
 Vim swoop is directly inspired from helm-swoop we can find as emacs' plugin.
 
 It allows you to find and replace occurences in many buffers being aware of the context.
 
-Feel free to go to the git repo so see an animation and picture.
-
-You can edit the swoopBuffer and the changes you applied will be save for all corresponding files by saving the buffer
-
-Especially useful to refactor a name in multiple files and keep control on it...
 
 
-------  Usage  -----
-
-When you start vim-swoop (multi or single buffer mode) you get 2 windows.
-
-First one contain context, the other is the swoop buffer. As you move the cursor to a match, the display windows will show the context.
-
-From the swoop buffer, you can:
-* Interactivly edit your search
-* Navigate in results (and context) by moving the cursor
-* Select current result.
-*Exit Swoop and go to the location of current match when you press \<CR\>*
-* Edit and save Swoop Buffer.
-*The changes will be repercuted on all files by saving the Swoop Buffer*
-* Quit Swoop.
-*Exiting Swoop will bring you back to the initial buffer and position.*
-* Toggle single and multi buffer mode
-
--- single buffer mode --
-Start in insert mode, first line contains the search pattern.
-
-As you type the pattern, results will interactivly be displayed bellow.
+Please, visit the git repo so have more info and see animation about how it works.
+https://github.com/pelodelfuego/vim-swoop
 
 
--- multi buffer mode --
-Start in insert mode, first line contains the buffer pattern, no pattern means all buffers.
-
-Buffer will be displayed interactivly bellow
-
-Second line contains the search pattern just like in single buffer mode
-
-
------  Commands and Configuration  -----
-
--- Commands --
-* Swoop current Buffer
-nmap <Leader>l :call Swoop()<CR>
-
-* Swoop multi Buffers
-nmap <Leader>ml :call SwoopMulti()<CR>
-
--- Configuration --
-
-* Disable quick regex mode
-
-    By default, typing \<Space\> in the search pattern is replaced by ".*". You can get classic mode by:
-let s:regexMode = 0
-
------  Tips and Tricks  -----
-
-* Use CursorLine
-
-    I strongly advise to highlight current line. It will help you to keep focus on the context of the current match.
-
-* FileType and Session
-    
-    If you use [Vim-session](https://github.com/xolox/vim-session), be aware that it doesn't keep buffer filetype in memory.
-
-    I'm working on this issue.
-
-* Toggle mode
-
-    You can toggle single and multi buffer mode, your Pattern will stay the same.
-
-    Calling again a mode while your already in will reset the search pattern.
-
-* Search in swoop buffer
-
-    Since the context display depends of the cursor movement, you can lauch a search inside the search buffer
-
-* Use last search
-
-    When you start swoop (either the mode) and don't enter any pattern, search result will be your last search.
-
-
-
------  Upcomming feature and improvement  -----
-* Display empty buffer in display window when no context available (ie pattern or buffer name)
-* Swoop Current selection
-* Improve swoop Colors in console
-* Option to choose display windows place
-* SmartCase search
 
 
 -----  Credit  -----

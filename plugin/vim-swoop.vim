@@ -1,4 +1,4 @@
-"   Vim Swoop   1.1.0
+"   Vim Swoop   1.1.3
 
 "Copyright (C) 2015 copyright Clément CREPY
 "
@@ -44,6 +44,17 @@ endif
 let s:multiSwoop = -1
 let s:freezeContext = 0
 
+if !exists('g:defaultWinSwoopWidth')
+    let g:defaultWinSwoopWidth = ""
+endif
+if !exists('g:defaultWinSwoopHeight')
+    let g:defaultWinSwoopHeight = ""
+endif
+
+let s:userWrapScan = &wrapscan
+let s:userCusrorLine = &cursorline
+let s:userHidden = &hidden
+
 let s:swoopSeparator = "\t"
 
 
@@ -58,15 +69,17 @@ function! s:initSwoop()
     let s:displayWin = bufwinnr('%')
 
     if g:swoopWindowsVerticalLayout == 1
-        silent bot vsplit swoopBuf
+        silent execute "bot " . g:defaultWinSwoopWidth . "vsplit swoopBuf"
     else
-        silent bot split swoopBuf
+        silent execute "bot " . g:defaultWinSwoopHeight . "split swoopBuf"
     endif
 
     execute "setlocal filetype=".initFileType
     let s:swoopBuf = bufnr('%')
 
+
     call s:initHighlight()
+    call s:initCpo()
 
     imap <buffer> <silent> <CR> <Esc>
     nmap <buffer> <silent> <CR> :call SwoopSelect()<CR>
@@ -92,9 +105,36 @@ function! s:initHighlight()
     endif
 endfunction
 
+function! s:initCpo()
+    set nowrapscan
+    set cursorline
+    set hidden
+endfunction
+
+function! s:restoreCpo()
+    if s:userWrapScan == 0
+        set nowrapscan
+    else
+        set wrapscan
+    endif
+
+    if s:userCusrorLine == 0
+        set nocursorline
+    else
+        set cursorline
+    endif
+
+    if s:userHidden == 0
+        set nohidden
+    else
+        set hidden
+    endif
+endfunction
+
 function! s:exitSwoop()
-    silent bw! swoopBuf
+    silent bd! swoopBuf
     call clearmatches()
+    call s:restoreCpo()
     let s:multiSwoop = -1
 endfunction
 
@@ -159,6 +199,13 @@ endfunction
 function! SwoopSave()
     let currentLine = line('.')
     execute "g/.*/call s:setSwoopLine(s:getCurrentLineSwoopInfo())"
+
+    for bufNr in s:getSwoopBufList()
+        execute "buffer" . bufNr
+        execute "w"
+    endfor
+
+    execute "buffer " . s:swoopBuf
     execute ":".currentLine
 endfunction
 
@@ -338,11 +385,13 @@ function! s:displayHighlight()
         endif
     endif
 
-    call matchadd("SwoopPatternHi", pattern)
+    let patternHi = pattern . '\c'
+
+    call matchadd("SwoopPatternHi", patternHi, -1)
 
     exec s:displayWin." wincmd w"
     call clearmatches()
-    call matchadd("SwoopPatternHi", pattern)
+    call matchadd("SwoopPatternHi", patternHi, -1)
     execute "wincmd p"
 
     call s:matchBufferLine(s:bufferLineList)
@@ -429,9 +478,8 @@ function! s:setSwoopLine(swoopInfo)
         if oldLine !=# newLine
             call setline(lineTarget, newLine)
         endif
-
+    	execute "buffer ". s:swoopBuf
     endif
-    execute "buffer ". s:swoopBuf
 endfunction
 
 
